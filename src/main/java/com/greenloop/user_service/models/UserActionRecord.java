@@ -11,7 +11,7 @@ import com.greenloop.user_service.enums.UserAction;
 @Entity
 @NoArgsConstructor
 @Data
-@Table(name = "user_action_history")
+@Table(name = "user_action_records")
 public class UserActionRecord {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

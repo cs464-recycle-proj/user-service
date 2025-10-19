@@ -1,6 +1,7 @@
 package com.greenloop.user_service.controllers;
 
 import com.greenloop.user_service.dtos.EventDTO;
+import com.greenloop.user_service.dtos.EventRecommendationDTO;
 import com.greenloop.user_service.dtos.UserActionDTO;
 import com.greenloop.user_service.models.User;
 import com.greenloop.user_service.models.UserActionRecord;
@@ -73,7 +74,7 @@ public class UserController {
 
     // ----- Recommendation -----
     @GetMapping("/users/{id}/recommendations")
-    public List<UUID> getRecommendations(@PathVariable UUID id, @RequestBody List<EventDTO> upcomingEvents) {
+    public List<EventRecommendationDTO> getRecommendations(@PathVariable UUID id, @RequestBody List<EventDTO> upcomingEvents) {
         return recommendationService.recommendEvents(id, upcomingEvents);
     }
 

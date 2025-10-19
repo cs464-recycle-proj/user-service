@@ -20,26 +20,44 @@ public class RecommendationService {
         this.interestRepo = interestRepo;
     }
 
-     // Recommendation: simple rule-based (returns event IDs of interest categories)
-    public List<UUID> recommendEvents(UUID userId, List<EventDTO> upcomingEvents) {
+    // Recommendation: simple rule-based (returns event IDs of interest categories)
+    public List<EventRecommendationDTO> recommendEvents(UUID userId, List<EventDTO> upcomingEvents) {
 
         List<UserInterest> interests = interestRepo.findByUserId(userId);
         List<String> categories = interests.stream().map(UserInterest::getInterest).collect(Collectors.toList());
 
+        // return upcomingEvents.stream()
+        //         .map(event -> new EventRecommendationDTO(event.getId(), computeScore(categories, event)))
+        //         .sorted(Comparator.comparingDouble(EventRecommendationDTO::getScore).reversed())
+        //         .limit(3)
+        //         .map(EventRecommendationDTO::getId)
+        //         .collect(Collectors.toList());
         return upcomingEvents.stream()
-            .map(event -> new EventRecommendationDTO(event.getId(), computeScore(categories, event)))
-            .sorted(Comparator.comparingDouble(EventRecommendationDTO::getScore).reversed())
-            .limit(10)
-            .map(EventRecommendationDTO::getId)
-            .collect(Collectors.toList());
+                .map(event -> new EventRecommendationDTO(event.getId(), computeScore(categories, event)))
+                .sorted(Comparator.comparingDouble(EventRecommendationDTO::getScore).reversed())
+                .limit(3)
+                // .map(EventRecommendationDTO::getId)
+                .collect(Collectors.toList());
 
     }
 
     private double computeScore(List<String> interests, EventDTO event) {
-        long tagMatches = event.getTags().stream().filter(interests::contains).count();
+
+        Set<String> lowerInterests = interests.stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+
+        long tagMatches = event.getTags().stream()
+                .map(String::toLowerCase)
+                .filter(lowerInterests::contains)
+                .count();
+
         double tagScore = tagMatches * 2;
+        if (tagScore == 0) {
+            return 0;
+        }
         double popularityScore = event.getAttendeeCount() * 0.1;
         return tagScore + popularityScore;
     }
-    
+
 }
