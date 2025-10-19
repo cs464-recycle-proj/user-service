@@ -1,30 +1,33 @@
 package com.greenloop.user_service.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.greenloop.user_service.enums.UserAction;
+
 @Entity
-@Getter
-@Setter
-@Table(name = "user_event_history")
-public class UserEventHistory {
+@NoArgsConstructor
+@Data
+@Table(name = "user_action_history")
+public class UserActionRecord {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
+    @JsonIgnore
     private User user;
 
     private UUID eventId;
-    private String action; // "joined", "viewed", "liked"
+    private UserAction action; 
     private Integer rating;
     private LocalDateTime timestamp = LocalDateTime.now();
 
     // Constructor
-    public UserEventHistory(User user, UUID eventId, String action, Integer rating) {
+    public UserActionRecord(User user, UUID eventId, UserAction action, Integer rating) {
         this.user = user;
         this.eventId = eventId;
         this.action = action;

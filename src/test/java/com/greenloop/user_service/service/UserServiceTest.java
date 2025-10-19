@@ -3,7 +3,7 @@ package com.greenloop.user_service.service;
 import com.greenloop.user_service.enums.UserRole;
 import com.greenloop.user_service.models.User;
 
-import com.greenloop.user_service.repos.UserEventHistoryRepository;
+import com.greenloop.user_service.repos.UserActionRecordRepository;
 import com.greenloop.user_service.repos.UserInterestRepository;
 import com.greenloop.user_service.repos.UserRepository;
 import com.greenloop.user_service.services.UserService;
@@ -21,14 +21,14 @@ class UserServiceTest {
 
     private UserRepository userRepo;
     private UserInterestRepository interestRepo;
-    private UserEventHistoryRepository historyRepo;
+    private UserActionRecordRepository historyRepo;
     private UserService service;
 
     @BeforeEach
     void setUp() {
         userRepo = mock(UserRepository.class);
         interestRepo = mock(UserInterestRepository.class);
-        historyRepo = mock(UserEventHistoryRepository.class);
+        historyRepo = mock(UserActionRecordRepository.class);
         service = new UserService(userRepo, interestRepo, historyRepo);
     }
 
@@ -60,14 +60,4 @@ class UserServiceTest {
         assertEquals("bob", found.getUsername());
     }
 
-    @Test
-    void testRecommendEvents() {
-        UUID userId = UUID.randomUUID();
-        List<UUID> allEvents = List.of(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
-
-        when(interestRepo.findByUserId(userId)).thenReturn(Collections.emptyList());
-
-        List<UUID> recommended = service.recommendEvents(userId, allEvents);
-        assertEquals(5, recommended.size());
-    }
 }

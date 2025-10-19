@@ -1,25 +1,26 @@
 package com.greenloop.user_service.services;
 
+import com.greenloop.user_service.dtos.UserActionDTO;
+import com.greenloop.user_service.enums.UserAction;
 import com.greenloop.user_service.models.User;
-import com.greenloop.user_service.models.UserEventHistory;
 import com.greenloop.user_service.models.UserInterest;
-import com.greenloop.user_service.repos.UserEventHistoryRepository;
+import com.greenloop.user_service.models.UserActionRecord;
+import com.greenloop.user_service.repos.UserActionRecordRepository;
 import com.greenloop.user_service.repos.UserInterestRepository;
 import com.greenloop.user_service.repos.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepo;
     private final UserInterestRepository interestRepo;
-    private final UserEventHistoryRepository historyRepo;
+    private final UserActionRecordRepository historyRepo;
 
     public UserService(UserRepository userRepo, UserInterestRepository interestRepo,
-            UserEventHistoryRepository historyRepo) {
+            UserActionRecordRepository historyRepo) {
         this.userRepo = userRepo;
         this.interestRepo = interestRepo;
         this.historyRepo = historyRepo;
@@ -61,29 +62,25 @@ public class UserService {
 
     public UserInterest addInterest(UUID userId, String interest) {
         User user = getUserById(userId);
-        if (user == null)
+        if (user == null){
             return null;
+        }
         UserInterest ui = new UserInterest(user, interest);
         return interestRepo.save(ui);
     }
 
     // Event History
-    public List<UserEventHistory> getEventHistory(UUID userId) {
+    public List<UserActionRecord> getEventHistory(UUID userId) {
         return historyRepo.findByUserId(userId);
     }
 
-    public UserEventHistory addEventHistory(UUID userId, UUID eventId, String action, Integer rating) {
+    public UserActionRecord addUserActionRecord(UUID userId, UserActionDTO userActionDTO ) {
         User user = getUserById(userId);
-        if (user == null)
+        if (user == null){
             return null;
-        UserEventHistory hist = new UserEventHistory(user, eventId, action, rating);
+        }
+           
+        UserActionRecord hist = new UserActionRecord(user, userActionDTO.getEventId(), userActionDTO.getAction(), userActionDTO.getRating());
         return historyRepo.save(hist);
-    }
-
-    // Recommendation: simple rule-based (returns event IDs of interest categories)
-    public List<UUID> recommendEvents(UUID userId, List<UUID> allEventIds) {
-        List<UserInterest> interests = getInterests(userId);
-        // Placeholder: for now, just return first N events (mock)
-        return allEventIds.stream().limit(5).collect(Collectors.toList());
     }
 }

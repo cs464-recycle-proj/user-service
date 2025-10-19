@@ -2,13 +2,15 @@ package com.greenloop.user_service.models;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Getter
-@Setter
+@NoArgsConstructor
+@Data
 @Table(name = "user_interests")
 public class UserInterest {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -16,6 +18,7 @@ public class UserInterest {
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
+    @JsonIgnore
     private User user;
 
     private String interest;

@@ -16,8 +16,8 @@ User Service is a backend microservice that manages users, their interests, and 
 | `/api/users/{id}` | DELETE | Path variable: id | — | Delete user |
 | `/api/users/{id}/interests` | GET | Path variable: id | List of UserInterest | Get user's interests |
 | `/api/users/{id}/interests` | POST | Path variable: id, `interest` param | UserInterest | Add a new interest |
-| `/api/users/{id}/events/history` | GET | Path variable: id | List of UserEventHistory | Get user's past event actions |
-| `/api/users/{id}/events/history` | POST | Path variable: id, params: `eventId`, `action`, `rating` | UserEventHistory | Add a new event history entry |
+| `/api/users/{id}/events/history` | GET | Path variable: id | List of UserActionHistory | Get user's past event actions |
+| `/api/users/{id}/events/history` | POST | Path variable: id, params: `eventId`, `action`, `rating` | UserActionHistory | Add a new event history entry |
 | `/api/users/{id}/recommendations` | GET | Path variable: id, param: `allEventIds` (list of event IDs) | List<Long> | Returns recommended event IDs (placeholder logic) |
 
 ---

@@ -1,16 +1,17 @@
 package com.greenloop.user_service.models;
 
 import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.greenloop.user_service.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.*;
 
 @Entity
-@Getter
-@Setter
+@NoArgsConstructor
+@Data
 @Table(name = "users")
 public class User {
     @Id
@@ -30,10 +31,12 @@ public class User {
     private UserRole role;
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL)
+    @JsonIgnore
     private List<UserInterest> interests;
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL)
-    private List<UserEventHistory> eventHistory;
+    @JsonIgnore
+    private List<UserActionRecord> eventHistory;
 
     // Constructor
     public User(String username, String email, UserRole role) {
