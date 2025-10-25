@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UserStatsDTO {
-    // TODO need userid?
+    // use for passing user stats to ui
     private int totalCoins;
     private int eventsAttended;
     private int eventsRegistered;

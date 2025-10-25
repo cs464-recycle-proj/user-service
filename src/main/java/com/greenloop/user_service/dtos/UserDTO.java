@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class UserDTO {
-
+    // used for user creation
     private String name;
     private String avatarUrl;
     private String bio;

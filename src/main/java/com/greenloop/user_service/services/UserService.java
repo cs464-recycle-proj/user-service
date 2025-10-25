@@ -28,6 +28,7 @@ public class UserService {
         return userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    // create new user
     public User createUser(UserDTO userDTO, UUID userId, String userEmail) {
 
         // create new user
@@ -45,6 +46,7 @@ public class UserService {
         return userRepo.save(user);
     }
 
+    // Update user
     public User updateUser(UUID id, User newUser) {
         return userRepo.findById(id).map(u -> {
             u.setName(newUser.getName());
@@ -53,9 +55,10 @@ public class UserService {
             u.setBio(newUser.getBio());
             u.setBday(newUser.getBday());
             return userRepo.save(u);
-        }).orElse(null);
+        }).orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    // Delete user
     public void deleteUser(UUID id) {
         userRepo.deleteById(id);
     }
