@@ -1,18 +1,16 @@
 package com.greenloop.user_service.dtos;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.*;
 
-@Getter
-@Setter
+@Data
 public class EventRecommendationDTO {
-    private UUID id;
+    private UUID userId;
     private double score;
 
-    public EventRecommendationDTO(UUID id, double score) {
-        this.id = id;
+    public EventRecommendationDTO(UUID userId, double score) {
+        this.userId = userId;
         this.score = score;
     }
     

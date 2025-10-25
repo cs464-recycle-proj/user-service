@@ -3,8 +3,7 @@ package com.greenloop.user_service.dtos;
 import lombok.*;
 import java.util.*;
 
-@Getter
-@Setter
+@Data
 public class EventDTO {
     
     private UUID id;

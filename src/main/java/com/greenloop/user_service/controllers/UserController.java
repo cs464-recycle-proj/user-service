@@ -1,19 +1,14 @@
 package com.greenloop.user_service.controllers;
 
-import com.greenloop.user_service.dtos.EventDTO;
-import com.greenloop.user_service.dtos.EventRecommendationDTO;
-import com.greenloop.user_service.dtos.UserActionDTO;
+import com.greenloop.user_service.dtos.*;
 import com.greenloop.user_service.models.User;
-import com.greenloop.user_service.models.UserActionRecord;
-import com.greenloop.user_service.models.UserInterest;
-import com.greenloop.user_service.services.RecommendationService;
-import com.greenloop.user_service.services.UserService;
+import com.greenloop.user_service.services.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -24,58 +19,36 @@ public class UserController {
         this.recommendationService = recommendationService;
     }
 
-    // ----- User CRUD -----
-    @PostMapping("/users")
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    @PostMapping
+    public User createUser(@RequestBody UserDTO userDTO, @RequestHeader("X-User-ID") String userId, @RequestHeader("X-User-Email") String userEmail) {
+        UUID userUuid = UUID.fromString(userId);
+        return userService.createUser(userDTO, userUuid, userEmail);
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/users/{id}")
-    public User getUser(@PathVariable UUID id) {
-        return userService.getUserById(id);
+    @GetMapping("/profile")
+    public User getUserProfile(@RequestHeader("X-User-ID") String userId) {
+        return userService.getUserById(UUID.fromString(userId));
     }
 
-    @PutMapping("/users/{id}")
-    public User updateUser(@PathVariable UUID id, @RequestBody User user) {
-        return userService.updateUser(id, user);
+    @PutMapping
+    public User updateUser(@RequestHeader("X-User-ID") String userId, @RequestBody User user) {
+        return userService.updateUser(UUID.fromString(userId), user);
     }
 
-    @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable UUID id) {
-        userService.deleteUser(id);
-    }
-
-    // ----- Interests -----
-    @GetMapping("/users/{id}/interests")
-    public List<UserInterest> getInterests(@PathVariable UUID id) {
-        return userService.getInterests(id);
-    }
-
-    @PostMapping("/users/{id}/interests")
-    public UserInterest addInterest(@PathVariable UUID id, @RequestBody String interest) {
-        return userService.addInterest(id, interest);
-    }
-
-    // ----- Event History -----
-    @GetMapping("/users/{id}/events/history")
-    public List<UserActionRecord> getEventHistory(@PathVariable UUID id) {
-        return userService.getEventHistory(id);
-    }
-
-    @PostMapping("/users/{id}/events/history")
-    public UserActionRecord addEventHistory(@PathVariable UUID id, @RequestBody UserActionDTO userActionDTO) {
-        return userService.addUserActionRecord(id, userActionDTO);
+    @DeleteMapping
+    public void deleteUser(@RequestHeader("X-User-ID") String userId) {
+        userService.deleteUser(UUID.fromString(userId));
     }
 
     // ----- Recommendation -----
-    @GetMapping("/users/{id}/recommendations")
-    public List<EventRecommendationDTO> getRecommendations(@PathVariable UUID id, @RequestBody List<EventDTO> upcomingEvents) {
-        return recommendationService.recommendEvents(id, upcomingEvents);
+    @GetMapping("/recommendations")
+    public List<EventRecommendationDTO> getRecommendations(@RequestHeader("X-User-ID") String userId, @RequestBody List<EventDTO> upcomingEvents) {
+        return recommendationService.recommendEvents(UUID.fromString(userId), upcomingEvents);
     }
 
 }

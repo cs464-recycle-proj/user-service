@@ -29,4 +29,9 @@ public class UserInterest {
         this.user = user;
         this.interest = interest;
     }
+
+    public UserInterest orElse(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElse'");
+    }
 }
