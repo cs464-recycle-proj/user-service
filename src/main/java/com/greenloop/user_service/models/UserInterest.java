@@ -1,37 +1,30 @@
 package com.greenloop.user_service.models;
 
-import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.greenloop.user_service.enums.Interest;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Table(name = "user_interests")
+@Builder
 public class UserInterest {
-    @Id @GeneratedValue(strategy = GenerationType.UUID)
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 
-    private String interest;
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    // Constructor
-    public UserInterest(User user, String interest) {
-        this.user = user;
-        this.interest = interest;
-    }
-
-    public UserInterest orElse(Object object) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'orElse'");
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Interest interest;
 }
