@@ -1,7 +1,6 @@
 package com.greenloop.user_service.controllers;
 
 import com.greenloop.user_service.dtos.*;
-import com.greenloop.user_service.models.UserInterest;
 import com.greenloop.user_service.services.*;
 
 import jakarta.validation.Valid;
@@ -66,11 +65,9 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@RequestHeader("X-User-ID") String userId) {
+    public ResponseEntity<Void> deleteUser(@RequestHeader("X-User-ID") String userId) {
         userService.deleteUser(parseUserId(userId));
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/interests")
