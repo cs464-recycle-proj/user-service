@@ -122,12 +122,14 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " was not found."));
 
         List<UserInterest> userInterests = new ArrayList<>();
-        for (String interest : interests) {
-            boolean exists = interestRepository.existsByUserIdAndInterest(userId, interest);
+        for (String interestString : interests) {
+            Interest interestEnum = Interest.valueOf(interestString.toUpperCase());
+            boolean exists = interestRepository.existsByUserIdAndInterest(userId, interestEnum);
+
             if (!exists) {
                 UserInterest ui = UserInterest.builder()
                         .user(user)
-                        .interest(Interest.valueOf(interest.toUpperCase()))
+                        .interest(interestEnum)
                         .build();
                 userInterests.add(ui);
             }

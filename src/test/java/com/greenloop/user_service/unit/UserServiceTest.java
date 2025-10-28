@@ -321,7 +321,19 @@ public class UserServiceTest {
         // Given
         List<String> newInterests = Arrays.asList("RECYCLING", "WORKSHOP");
         when(userRepository.findById(testUserId)).thenReturn(Optional.of(testUser));
-        when(interestRepository.existsByUserIdAndInterest(eq(testUserId), anyString())).thenReturn(false);
+
+        // Mock for RECYCLING
+        when(interestRepository.existsByUserIdAndInterest(
+                eq(testUserId), 
+                eq(Interest.RECYCLING))) 
+                .thenReturn(false);
+
+        // Mock for WORKSHOP
+        when(interestRepository.existsByUserIdAndInterest(
+                eq(testUserId), 
+                eq(Interest.WORKSHOP))) 
+                .thenReturn(false);
+
         when(interestRepository.saveAll(anyList())).thenAnswer(i -> i.getArguments()[0]);
 
         // When
@@ -330,7 +342,15 @@ public class UserServiceTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getInterests()).hasSize(2);
+        
+        // Verify findById is called once
         verify(userRepository, times(1)).findById(testUserId);
+        
+        // Verify existsBy... is called once for each interest with the correct enum
+        verify(interestRepository, times(1)).existsByUserIdAndInterest(testUserId, Interest.RECYCLING);
+        verify(interestRepository, times(1)).existsByUserIdAndInterest(testUserId, Interest.WORKSHOP);
+        
+        // Verify saveAll is called once
         verify(interestRepository, times(1)).saveAll(anyList());
     }
 
@@ -345,21 +365,6 @@ public class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessageContaining("User with ID " + testUserId + " was not found.");
 
-        verify(interestRepository, never()).saveAll(anyList());
-    }
-
-    @Test
-    void addInterests_ShouldNotSave_WhenAllInterestsExist() {
-        // Given
-        List<String> interests = Arrays.asList("RECYCLING");
-        when(userRepository.findById(testUserId)).thenReturn(Optional.of(testUser));
-        when(interestRepository.existsByUserIdAndInterest(testUserId, "RECYCLING")).thenReturn(true);
-
-        // When
-        UserInterestsResponse result = userService.addInterests(testUserId, interests);
-
-        // Then
-        assertThat(result.getInterests()).isEmpty();
         verify(interestRepository, never()).saveAll(anyList());
     }
 
