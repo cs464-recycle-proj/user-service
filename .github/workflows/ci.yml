@@ -160,11 +160,14 @@ jobs:
     if: github.event_name == 'push'
     
     permissions:
+      contents: read
       security-events: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Docker image artifact
         uses: actions/download-artifact@v4
