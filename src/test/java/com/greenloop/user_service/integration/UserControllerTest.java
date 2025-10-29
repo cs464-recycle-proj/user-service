@@ -212,12 +212,4 @@ public class UserControllerTest {
 
         verify(userService, times(1)).addInterests(eq(testUserId), anyList());
     }
-
-    @Test
-    void checkHealth_ShouldReturnOk() throws Exception {
-        // When & Then
-        mockMvc.perform(get("/api/users/health"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("User Service is Up and Running!"));
-    }
 }

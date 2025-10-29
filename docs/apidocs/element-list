@@ -1,0 +1,9 @@
+com.greenloop.user_service
+com.greenloop.user_service.configs
+com.greenloop.user_service.controllers
+com.greenloop.user_service.dtos
+com.greenloop.user_service.enums
+com.greenloop.user_service.exceptions
+com.greenloop.user_service.models
+com.greenloop.user_service.repos
+com.greenloop.user_service.services

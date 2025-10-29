@@ -20,6 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service layer for user profile and interest management.
+ * <p>
+ * Handles business logic for user CRUD operations, avatar updates,
+ * interest tracking, and DTO mapping. Coordinates with UserRepository
+ * and UserInterestRepository for database persistence.
+ * </p>
+ *
+ * @see User
+ * @see UserInterest
+ * @see UserRepository
+ * @see UserInterestRepository
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -27,6 +40,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserInterestRepository interestRepository;
 
+    /**
+     * Retrieves all user profiles from the database.
+     *
+     * @return list of all users as UserResponse DTOs
+     */
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -34,6 +52,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a user by their unique ID.
+     *
+     * @param id user's UUID
+     * @return user profile as UserResponse DTO
+     * @throws UserNotFoundException if no user exists with the given ID
+     */
     public UserResponse getUserById(UUID id) {
         return userRepository.findById(id)
                 .map(this::mapToResponse)
@@ -61,6 +86,15 @@ public class UserService {
         return mapToResponse(savedUser);
     }
 
+    /**
+     * Updates an existing user's profile fields.
+     * Only non-null fields in the request are updated.
+     *
+     * @param id      user's UUID
+     * @param request partial update DTO containing modified fields
+     * @return updated user profile as UserResponse DTO
+     * @throws UserNotFoundException if no user exists with the given ID
+     */
     @Transactional
     public UserResponse updateUser(UUID id, UpdateUserRequest request) {
         return userRepository.findById(id)
@@ -81,6 +115,14 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " was not found."));
     }
 
+    /**
+     * Updates a user's avatar URL.
+     *
+     * @param id      user's UUID
+     * @param request DTO containing new avatar URL
+     * @return updated user profile as UserResponse DTO
+     * @throws UserNotFoundException if no user exists with the given ID
+     */
     @Transactional
     public UserResponse updateAvatar(UUID id, UpdateAvatarRequest request) {
         return userRepository.findById(id)
@@ -91,6 +133,12 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " was not found."));
     }
 
+    /**
+     * Deletes a user permanently from the database.
+     *
+     * @param id user's UUID
+     * @throws UserNotFoundException if no user exists with the given ID
+     */
     public void deleteUser(UUID id) {
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException("User with ID " + id + " was not found.");
@@ -98,6 +146,12 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    /**
+     * Maps a User entity to a UserResponse DTO.
+     *
+     * @param user the User entity
+     * @return UserResponse DTO with profile data
+     */
     private UserResponse mapToResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
@@ -112,11 +166,26 @@ public class UserService {
                 .build();
     }
 
+    /**
+     * Retrieves all interests associated with a user.
+     *
+     * @param userId user's UUID
+     * @return UserInterestsResponse DTO containing list of interest strings
+     */
     public UserInterestsResponse getInterests(UUID userId) {
         List<UserInterest> userInterests = interestRepository.findByUserId(userId);
         return mapInterestsResponse(userInterests);
     }
 
+    /**
+     * Adds new interests to a user's profile.
+     * Skips interests that already exist for the user.
+     *
+     * @param userId    user's UUID
+     * @param interests list of interest strings (converted to Interest enum)
+     * @return UserInterestsResponse DTO with added interests
+     * @throws UserNotFoundException if no user exists with the given ID
+     */
     public UserInterestsResponse addInterests(UUID userId, List<String> interests) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " was not found."));
@@ -141,6 +210,12 @@ public class UserService {
         return mapInterestsResponse(userInterests);
     }
 
+    /**
+     * Maps a list of UserInterest entities to a UserInterestsResponse DTO.
+     *
+     * @param userInterests list of UserInterest entities
+     * @return UserInterestsResponse DTO with interest strings
+     */
     private UserInterestsResponse mapInterestsResponse(List<UserInterest> userInterests) {
         List<String> interestStrings = userInterests.stream()
                 .map(UserInterest::getInterest)
